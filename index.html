@@ -1,390 +1,57 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>💌 Feliz 1er Mes 💞</title>
-<style>
-  :root{
-    --pink-1: #fff0f5;    /* papel */
-    --pink-2: #ffd6e0;    /* sobre */
-    --pink-3: #ff9db8;    /* solapa */
-    --accent: #d63384;    /* texto */
-    --bg1: #ffeef6;
-    --bg2: #ffd4e6;
-  }
-
-  /* Reset ligero */
-  *{box-sizing:border-box}
-  body{
-    margin:0;
-    font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    background: linear-gradient(135deg,var(--bg1),var(--bg2));
-    color:var(--accent);
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    text-align:center;
-    min-height:100vh;
-    overflow-x:hidden;
-    padding-bottom:120px; /* espacio para firma/música */
-  }
-
-  h1{
-    margin:28px 12px 6px;
-    font-size:2.4rem;
-    text-shadow: 0 2px 6px rgba(255,255,255,0.6);
-  }
-
-  /* Contenedor de sobres */
-  .container{
-    display:flex;
-    flex-wrap:wrap;
-    gap:28px;
-    justify-content:center;
-    align-items:flex-start;
-    padding:28px;
-    max-width:1200px;
-    margin:0 auto;
-  }
-
-  /* Cada tarjeta(envelope) */
-  .envelope-wrap{
-    width:260px;
-    height:170px;
-    perspective:1000px;
-    cursor:pointer;
-  }
-
-  .envelope{
-    position:relative;
-    width:100%;
-    height:100%;
-    transform-style:preserve-3d;
-  }
-
-  /* cuerpo del sobre (lo que parece el frente) */
-  .body{
-    position:absolute;
-    inset:0;
-    background: linear-gradient(180deg,var(--pink-2),#ffe7f0);
-    border-radius:12px;
-    box-shadow: 0 8px 18px rgba(0,0,0,0.12);
-    overflow:hidden;
-  }
-
-  /* solapa triangular */
-  .flap{
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:62%;
-    background: linear-gradient(180deg,var(--pink-3),#ff7aa7);
-    clip-path: polygon(0 0, 50% 100%, 100% 0);
-    transform-origin: top center;
-    transform: rotateX(0deg);
-    transition: transform 0.7s cubic-bezier(.2,.9,.3,1);
-    z-index:3;
-  }
-
-  /* borde decorativo de solapa */
-  .flap::after{
-    content:"";
-    position:absolute;
-    left:10%;
-    right:10%;
-    bottom:8%;
-    height:3px;
-    background: rgba(255,255,255,0.25);
-    border-radius:2px;
-  }
-
-  /* interior/papel (se desliza hacia arriba) */
-  .paper{
-    position:absolute;
-    left:8px;
-    right:8px;
-    bottom:-110%; /* escondido */
-    height:calc(100% - 14px);
-    background: var(--pink-1);
-    border-radius:10px;
-    padding:14px;
-    box-shadow: 0 6px 14px rgba(0,0,0,0.08);
-    color:#9e1453;
-    overflow:auto;
-    transition: bottom 0.9s cubic-bezier(.2,.9,.3,1), opacity 0.6s;
-    opacity:0;
-    text-align:left;
-    line-height:1.6;
-  }
-
-  /* Cuando el sobre está "open" */
-  .envelope-wrap.open .flap{
-    transform: rotateX(-180deg); /* solapa se levanta */
-  }
-  .envelope-wrap.open .paper{
-    bottom:8px; /* se muestra */
-    opacity:1;
-  }
-
-  /* Imagen dentro de la carta */
-  .paper img{
-    width:100%;
-    height:auto;
-    display:block;
-    border-radius:8px;
-    margin-bottom:10px;
-  }
-
-  /* Título pequeño en la parte frontal del sobre */
-  .front-label{
-    position:absolute;
-    left:16px;
-    top:16px;
-    font-weight:700;
-    color:white;
-    text-shadow:0 2px 6px rgba(0,0,0,0.15);
-    z-index:2;
-    font-size:1.05rem;
-  }
-
-  /* Corazones flotantes */
-  .hearts{
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    z-index:1;
-  }
-  .heart{
-    position:absolute;
-    font-size:18px;
-    opacity:0.9;
-    animation: floaty linear infinite;
-    transform:translateY(0);
-  }
-  @keyframes floaty{
-    0%{ transform: translateY(110vh) scale(0.6); opacity:0; }
-    15%{ opacity:1; }
-    100%{ transform: translateY(-10vh) scale(1.1); opacity:0;}
-  }
-
-  /* Botón música */
-  .music-btn{
-    position:fixed;
-    right:18px;
-    bottom:18px;
-    z-index:50;
-    background:linear-gradient(180deg,var(--pink-3),#ff5b8f);
-    color:white;
-    border:none;
-    padding:12px 16px;
-    border-radius:999px;
-    box-shadow:0 6px 16px rgba(0,0,0,0.16);
-    cursor:pointer;
-    font-weight:600;
-  }
-
-  .music-btn:active{ transform:translateY(1px); }
-
-  /* Texto final y firma */
-  .footer-text{
-    margin:34px auto 12px;
-    max-width:900px;
-    padding:12px 22px;
-    font-size:1.15rem;
-    color:#b41359;
-  }
-  .signature{
-    font-weight:700;
-    color:#8b0f46;
-    margin-bottom:40px;
-  }
-
-  /* Bienvenida */
-  .welcome{
-    position:fixed;
-    inset:0;
-    background: radial-gradient(circle at center,#ffb6c1 0%, #ff9bb7 50%, #ff7aa7 100%);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    z-index:60;
-    color:white;
-    animation: welcomeHide 2s forwards;
-    animation-delay:3.8s;
-  }
-  .welcome h2{ font-size:2.2rem; margin:0 6px; text-shadow:0 6px 18px rgba(0,0,0,0.2); }
-  .welcome p{ opacity:0.95; margin-top:10px; font-size:1rem; }
-
-  @keyframes welcomeHide {
-    to{ opacity:0; visibility:hidden; transform:scale(1.02); }
-  }
-
-  /* Scrollbar estilizada para el papel */
-  .paper::-webkit-scrollbar{ width:8px; }
-  .paper::-webkit-scrollbar-thumb{ background:linear-gradient(180deg,#ff9db8,#ffb6d0); border-radius:8px; }
-
-  /* Responsive */
-  @media (max-width:720px){
-    .container{ gap:18px; }
-    .envelope-wrap{ width:46vw; height:140px; }
-    .paper{ padding:12px; font-size:0.95rem; }
-  }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>💌 Carta para Ti 💞</title>
+  <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
 
   <!-- Pantalla de bienvenida -->
-  <div class="welcome" id="welcome">
+  <section class="welcome" id="welcome">
     <h2>💖 Para mi amor 💖</h2>
-    <p>Feliz primer mes juntos — abre las cartas y descubre mis palabras</p>
+    <p>Ábrela y descubre mis palabras</p>
+  </section>
+
+  <header>
+    <h1>💞 Una Carta para Ti 💞</h1>
+  </header>
+
+  <main class="container" id="container">
+    <article class="envelope-wrap" id="envelope-wrap">
+      <div class="envelope">
+        <div class="body">
+          <div class="flap"></div>
+        </div>
+      </div>
+    </article>
+  </main>
+  
+  <!-- Nueva Estructura del Modal (Carta) -->
+  <div id="overlay"></div>
+  <div class="paper-modal" id="paper-modal">
+    <button id="close-btn" class="close-btn" aria-label="Cerrar carta">&times;</button>
+    <p>Volví a sentir.<br>
+    No sé si volví a sentir, o si nunca dejé de hacerlo.<br>
+    Incluso no tengo idea si yo antes de ti había amado.<br>
+    Todo es distinto a tu lado, y esas dos semanas que compartimos me lo demostraron.<br>
+    Mmm, no sé.<br>
+    Tal vez no estoy volviendo a sentir, sino aprendiendo a hacerlo.<br>
+    A quedarme cuando la distancia asusta.<br>
+    A confiar en las palabras y tenerle paciencia a los kilómetros que hoy nos separan.<br>
+    Este amor a distancia no es para cualquiera.<br>
+    Apenas estoy aprendiendo lo difícil que es sostenernos fuerte cuando la lejanía pesa y el cansancio parece que nos viene abajo.<br>
+    Me duele mucho lo difícil que ha sido últimamente y la frustración de no poder tenerte cerca.<br>
+    Pero soportaría esta espera y lo volvería a sentir todo, si al final del cuento yo me quedo a tu lado, porque te amo y eres definitivamente tú la mujer con la que elijo estar.<br>
+    Posdata, no volví a sentir.<br>
+    Lo hice por primera vez contigo.</p>
+    
+    <img src="./nosotros.jpg" alt="Nosotros" class="letter-image" />
   </div>
 
-  <h1>💞 Feliz Primer Mes 💞</h1>
-
-  <!-- Contenedor de sobres -->
-  <div class="container" id="container">
-    <!-- --- Carta 1 --- -->
-    <div class="envelope-wrap" onclick="toggleEnvelope(this)">
-      <div class="envelope">
-        <div class="body">
-          <div class="front-label"></div>
-          <div class="flap"></div>
-          <div class="paper">
-            <img src="https://cdn.somoskudasai.com/image/25f4510133098a40c025896cad5e6325/1280x720/my-dress-up-darling-post-2.webp" alt="Rosas">
-            <p><strong>Mi amor,</strong> este mes contigo ha sido el inicio más hermoso que he vivido y lo unico que mas hermosamente vivido. Cada día contigo me enseña algo nuevo sobre la felicidad, el cariño y la ternura, me has enseñado cosas nuevas que nunca pense experimentar pronto amor bella. Me encanta cómo me miras, cómo me hablas, cómo me haces sentir que el mundo se detiene solo para nosotros dos. Me encanta pasar los dias platicando y escucharte para siempre </p>
-            <p>Gracias por cada detalle, por cada palabra, por hacerme sentir querido de verdad. Espero que esta historia que estamos empezando se vuelva infinita y las vamos a hacer infinitas ❤️</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- --- Carta 2 --- -->
-    <div class="envelope-wrap" onclick="toggleEnvelope(this)">
-      <div class="envelope">
-        <div class="body">
-          <div class="front-label"></div>
-          <div class="flap"></div>
-          <div class="paper">
-            <img src="https://a.storyblok.com/f/178900/960x540/130260f986/apothecary-diaries.jpg/m/filters:quality(95)format(webp)" alt="Atardecer">
-            <p>Yo de verdad veia el mundo como lo hacia Lakan, es de el diario de la boticaria, pero bueno, toma esta imagen de referencia de como veia la vida antes, no le tomaba importancia a nadie y a nadam, no me sentia como me siento contigo con nadie mas, solo contigo siento mariposas en el estomago, solo cinitgo siento nervios y escalofrios cada vez que te pienso digo, wooooooow es muy hermosa, es muy bella, como soy tan afortunado de conocerlaaa, como es que una persona tan bella realmente existe, como es que alguien tan PERFECTA exite, pues eres tu mi amor bella LAYLA CRISTINA SALAZAR YUJRA, a la unica que le voy decir que la amo, que es mi esposa, la unica con la quiero experimentar todo, la unica que quiero tener EN TODAS LAS VIDAS</p>
-            <p>Eres esa persona que me empuja a ser mejor de forma natural, por amor. Gracias por elegirme, por tus abrazos y por tantas cosas pequeñas que llenan mi corazón de luz. Gracias amor por ser tu misma y por dejarme ser yo mismo contigo. TE AMOOOO</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- --- Carta 3 --- -->
-    <div class="envelope-wrap" onclick="toggleEnvelope(this)">
-      <div class="envelope">
-        <div class="body">
-          <div class="front-label"></div>
-          <div class="flap"></div>
-          <div class="paper">
-            <img src="https://i.blogs.es/012cce/fengxian/1366_2000.jpeg" alt="Corazón">
-            <p> (POSDATAA : No le hagas caso a la historia de estos personajes del anime solo tomo de referencia como se enamoran y demas, su historia no termina bien asi que solo toma mas bien de referencia las imagenes por favoooooor jadsdawa te amo) La primera ves que te vi y que te escuche fue la unica persona que vi con un rostro y fue el mas bello que eh bisto y voy a ver jamas eres hermosa en todos los aspectos y situaciones mi amor bella preciosa lindaaaa.Cada pensamiento en mi cabeza tiene un rastro tuyo enorme que lo marca para siempre y eso me encanta, me encantas tuu. Tus risas, tus palabras y tu forma de mirar me enamoran cada día más.</p>
-            <p>Deseo que sigamos coleccionando recuerdos, fotos, tardes, canciones y planes que nos hagan sonreír cuando los recordemos dentro de muchos años.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- --- Carta 4 --- -->
-    <div class="envelope-wrap" onclick="toggleEnvelope(this)">
-      <div class="envelope">
-        <div class="body">
-          <div class="front-label"></div>
-          <div class="flap"></div>
-          <div class="paper">
-            <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/0a25ae88-017b-4429-9718-6a1a385acb55/dgwku8g-580aaa8f-5309-4843-ba77-f92c252e159d.jpg/v1/fill/w_1063,h_752,q_70,strp/kurosawa_and_adachi_redraw_by_effectivelyweird_dgwku8g-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTI0MCIsInBhdGgiOiIvZi8wYTI1YWU4OC0wMTdiLTQ0MjktOTcxOC02YTFhMzg1YWNiNTUvZGd3a3U4Zy01ODBhYWE4Zi01MzA5LTQ4NDMtYmE3Ny1mOTJjMjUyZTE1OWQuanBnIiwid2lkdGgiOiI8PTE3NTQifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.jrvx28OAnu6v_1xvGwPUSj8stcALfE7pgg09_eIv7AA" alt="Globos">
-            <p>Prometo seguir cuidando de este amor con ternura. Reír contigo, secarte las lágrimas cuando haga falta y celebrar tus triunfos. No quiero dejar de decirte lo importante que eres. Prometo seguir amandote maaas cada dia que paso junto a tu lado por que es lo que quiero estar contigopara siempre en esta vida que solamente tu puedes iluminar, amor bella eres mi todo, eres mi alfa, eres mi todo, me encanta, me das mucha felicidad, paz y tranquilidad a mi. TE AMOOOOOOOOOOOOOOOOOOOOOOOO</p>
-            <p>Gracias por ser mi refugio, por ser mi risa favorita y por todos los momentos que aún nos faltan por vivir.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- --- Carta 5 --- -->
-    <div class="envelope-wrap" onclick="toggleEnvelope(this)">
-      <div class="envelope">
-        <div class="body">
-          <div class="front-label"></div>
-          <div class="flap"></div>
-          <div class="paper">
-            <img src="https://goodsrepublic.com/media/binary/010/441/068/10441068.jpg.webp" alt="Manos">
-            <p>Este mes ha sido una colección de momentos preciosos que guardaré siempre. Desde nuestras charlas hasta las pequeñas locuras; todo contigo es especial. De vedad que este mes y desdes que te conoci mi vida es mucho mejor gracias a tii, solo tu me haces feliz amor bella, solo tu me haces sentirme seguro de mi mismo, solo tu amor, solo tuuuu, y te amo te amoooo, como no te das una dia, estoy loco por ti y quiero que de verda me hagas tuyo cada dia, quiero ser tuyo, quiero que me hagas saber lo que es amor, un sentmiento que no tenia idea que era muy fuerte. Y TE AMO por todo amor todo lo que haces</p>
-            <p>Mi amor por ti crece cada día y quiero que lo sepas, hoy y siempre.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- --- Carta 6 --- -->
-    <div class="envelope-wrap" onclick="toggleEnvelope(this)">
-      <div class="envelope">
-        <div class="body">
-          <div class="front-label"></div>
-          <div class="flap"></div>
-          <div class="paper">
-            <img src="https://media.timeout.com/images/105851565/1024/576/image.webp" alt="Luz">
-            <p>Te amo con cada parte de mí, y este es solo el comienzo de nuestra historia juntos. Quiero que sepas amor que todo amor es posible gracias a ti, tu me completas, me haces mejor persona, me das animos para seguir adelante para poder darte todo amor bella preciosa, me encantas TODA, de pies a cabeza, eres la mas fuerte las mas bella, la mas unica y pura amor bella, la mas preciosa, la reina amor bella, la unica HERMOSA EN ESTE MUNDO, la unica que hace latir mi corazon y que me da tranquilidad en mis sueños, en los cuales nos vamos a encontrar siempre</p>
-            <p>Feliz primer mes, mi vida. Gracias por todo lo que eres. 💌</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div> <!-- fin container -->
-
-  <!-- Texto final y firma -->
-  <div class="footer-text">
-    ✨ Gracias por hacerme tan feliz. Eres mi sueño hecho realidad, eres mi todo de verdad mi amor bella preciosa, TE AMOOO MUCHISMOOOOO DE VERDAD PRECIOSA LINDA, TODOOO, Y YO SIEMPRE VOY A SER TU OMEGA Y TUYOOO PARA SIEMPRE ME ENCANTAS MUCHO DE VERDAD TE AMO MUCHISMOOOOO LAYLA MI ESPOSA, ERES UNA PERSONA INCREIBLE UNICA, BELLA Y DEMASIADO INTELIGENTE DE VERDAD AMOR, ERES MI PRIORIDAD, MI TODO , MI UNIVERSO Y EL AMOR DE TODAS MI VIDAS. 💫
-    <div class="signature">Con todo mi amor — Victor tu esposito tu omega tuyoooooo, tu sumiso, todoo tuyooooo, pueda que todo esto te lo repite todos los dias, quiero que sepas que todo esto lo siento x10 cada segundo que pasa de mi vida TE AMO MUCHO MUCHO 💌</div>
-  </div>
-
-  <!-- Corazones flotantes -->
-  <div class="hearts" id="hearts"></div>
-<script>
-  // Abre/cierra envelope (flap + papel)
-  function toggleEnvelope(el){
-    // cerrar otros sobres opcional (descomenta si quieres cerrar los demás al abrir uno)
-    // document.querySelectorAll('.envelope-wrap.open').forEach(s => { if(s!==el) s.classList.remove('open'); });
-
-    el.classList.toggle('open');
-  }
-
-
-  // Corazones flotantes dinámicos
-  const heartsContainer = document.getElementById('hearts');
-  const heartEmojis = ['💖','💕','🌸','💗','💞'];
-  function spawnHeart(){
-    const h = document.createElement('div');
-    h.className = 'heart';
-    h.textContent = heartEmojis[Math.floor(Math.random()*heartEmojis.length)];
-    // tamaño y posición aleatoria
-    const size = 12 + Math.random()*28;
-    h.style.fontSize = size + 'px';
-    h.style.left = Math.random()*100 + 'vw';
-    h.style.animationDuration = (5 + Math.random()*6) + 's';
-    heartsContainer.appendChild(h);
-    // eliminar cuando termine
-    setTimeout(()=> h.remove(), 12000);
-  }
-  // generar varios a intervalos
-  setInterval(spawnHeart, 500);
-
-  // Ocultar welcome después de animación (ya tiene animación CSS)
-  window.addEventListener('load', ()=>{
-    setTimeout(()=> {
-      const w = document.getElementById('welcome');
-      if(w) w.style.display = 'none';
-    }, 5200);
-  });
-
-  // Sugerencia: evitar que el scroll del body interfiera con el scroll dentro de las cartas en móviles
-  // (si el usuario mueve dentro de la carta, no scroll la página). Hecho por CSS (overflow:auto).
-</script>
+  <div class="hearts" id="hearts" aria-hidden="true"></div>
+  
+  <script src="./script.js" type="module"></script>
 </body>
 </html>
-
